@@ -6,7 +6,7 @@ type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-function Section({children, title}: SectionProps): JSX.Element {
+function CustomSection({children, title}: SectionProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -19,15 +19,7 @@ function Section({children, title}: SectionProps): JSX.Element {
         ]}>
         {title}
       </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+      <View>{children}</View>
     </View>
   );
 }
@@ -48,4 +40,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Section;
+export default CustomSection;

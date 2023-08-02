@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, {useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import {
   Keyboard,
   SafeAreaView,
@@ -21,7 +21,10 @@ import {
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import CustomButton from './src/components/CustomButton';
 import CustomInput from './src/components/CustomInput';
+import CustomSection from './src/components/CustomSection';
 import TodoCard from './src/components/TodoCard';
+import {sections} from './src/constants';
+import {getSections} from './src/helper';
 
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -32,9 +35,19 @@ function App(): JSX.Element {
 
   const [todo, setTodo] = useState('');
   const [list, setList] = useState<any>([]);
+  const [groups, setGroups] = useState<any>([]);
+
+  useEffect(() => {
+    setGroups([...getSections(list)]);
+  }, [list]);
 
   const addToDo = () => {
     if (todo === '') {
+      return;
+    }
+    //----check for already existed todo------------------
+    const ifExist = list.filter((_title: string) => _title === todo);
+    if (ifExist.length > 0) {
       return;
     }
     setList([...list, todo]);
@@ -42,10 +55,8 @@ function App(): JSX.Element {
   };
 
   const removeTodo = (_todo: string) => {
-    console.log('todo', _todo);
     if (list.length > 0) {
       let arr = list.filter((l: string) => l !== _todo);
-      console.log('arr', arr);
       setList([...arr]);
     }
   };
@@ -86,14 +97,31 @@ function App(): JSX.Element {
             // contentInsetAdjustmentBehavior="automatic"
             style={{flex: 1}}>
             <View onStartShouldSetResponder={() => true}>
-              {list?.length > 0 ? (
-                list?.map((todo: string, key: number) => {
+              {groups?.length > 0 ? (
+                groups?.map((todoSection: any, key: number) => {
                   return (
-                    <TodoCard
-                      todo={todo}
-                      key={key}
-                      onDelete={() => removeTodo(todo)}
-                    />
+                    <CustomSection title={todoSection.title} key={key}>
+                      {todoSection?.data?.length > 0 ? (
+                        todoSection?.data?.map(
+                          (todoname: string, index: number) => (
+                            <TodoCard
+                              todo={todoname}
+                              key={index}
+                              onDelete={() => removeTodo(todoname)}
+                            />
+                          ),
+                        )
+                      ) : (
+                        <Text
+                          style={{
+                            textAlign: 'center',
+                            marginVertical: 16,
+                            fontSize: 16,
+                          }}>
+                          Empty Todo
+                        </Text>
+                      )}
+                    </CustomSection>
                   );
                 })
               ) : (
@@ -106,9 +134,6 @@ function App(): JSX.Element {
                   Empty Todo
                 </Text>
               )}
-              {/* <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section> */}
             </View>
           </ScrollView>
         </View>

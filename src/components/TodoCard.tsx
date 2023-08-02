@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     padding: 16,
-    marginBottom: 12,
+    marginVertical: 12,
   },
   nameView: {
     // paddingHorizontal: 4,
